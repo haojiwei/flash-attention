@@ -85,7 +85,7 @@ def check_if_cuda_home_none(global_option: str) -> None:
 
 def append_nvcc_threads(nvcc_extra_args):
     if not FORCE_SINGLE_THREAD:
-        return nvcc_extra_args + ["--threads", "4"]
+        return nvcc_extra_args + ["--threads", "8"]
     return nvcc_extra_args
 
 
@@ -212,6 +212,7 @@ if not SKIP_CUDA_BUILD:
                 Path(this_dir) / "csrc" / "flash_attn" / "src",
                 Path(this_dir) / "csrc" / "cutlass" / "include",
             ],
+            use_ninja=True,
         )
     )
 
@@ -312,7 +313,7 @@ setup(
         "Operating System :: Unix",
     ],
     ext_modules=ext_modules,
-    cmdclass={"bdist_wheel": CachedWheelsCommand, "build_ext": BuildExtension}
+    cmdclass={"bdist_wheel": CachedWheelsCommand, "build_ext": BuildExtension.with_options(use_ninja=True)}
     if ext_modules
     else {
         "bdist_wheel": CachedWheelsCommand,
